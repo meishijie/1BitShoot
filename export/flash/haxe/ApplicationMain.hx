@@ -135,7 +135,7 @@ class ApplicationMain {
 		
 		config = {
 			
-			build: "25",
+			build: "40",
 			company: "HaxeFlixel",
 			file: "FlxAtlas",
 			fps: 60,

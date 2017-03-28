@@ -21,8 +21,8 @@ class PlayState extends FlxState {
 	private var gun:FlxSprite;
 
 	// group that contains the bullets
-	private var bulletPool:FlxTypedGroup<FlxSprite>;
-	private var enemyPool:FlxTypedGroup<Enemy>;
+	public static var bulletPool(default,null):FlxTypedGroup<FlxSprite>;
+	public static var enemyPool(default,null):FlxTypedGroup<Enemy>;
 
 	// variable to track the elapsed time
 	private var elapsed:Float = 0xFFFF;
@@ -31,7 +31,7 @@ class PlayState extends FlxState {
 	private var SHOT_DELAY = 0.01; // 100ms
 	private var BULLET_SPEED = 1000;
 	private var NUMBER_OF_BULLETS = 2;
-	private var NUMBER_OF_ENEMYS = 10;
+	private var NUMBER_OF_ENEMYS = 1;
 
 	// setup the example
 	public override function create():Void {
@@ -42,7 +42,7 @@ class PlayState extends FlxState {
 		
 		// create the gun sprite
 		gun = new FlxSprite(FlxG.width/2, FlxG.height);
-		gun.y = FlxG.height - gun.height;
+		gun.y = FlxG.height - 100;
 		gun.loadGraphic("assets/bullet.png");
 
 		// create a pool of bullets that we can shoot
@@ -85,6 +85,7 @@ class PlayState extends FlxState {
 
 	// update() method is called every frame
 	public override function update(elapsed:Float):Void{
+		makeEnemy();
 		// set the gun angle
 		gun.angle = FlxAngle.angleBetweenMouse(gun, true);
 
@@ -114,14 +115,29 @@ class PlayState extends FlxState {
 		bullet.revive();
 		// set the bullet position to the gun position.
 		bullet.reset(gun.x, gun.y);
-		// set the bullet angle
-		bullet.angle = FlxAngle.angleBetweenMouse(bullet, true);
-		// shoot in the right direction! Peng!
-		bullet.velocity.x = Math.cos(bullet.angle * FlxAngle.TO_RAD) * BULLET_SPEED;
-		bullet.velocity.y = Math.sin(bullet.angle * FlxAngle.TO_RAD) * BULLET_SPEED;
+		MoveToAngle(bullet);
+		
 	}
 	private function makeEnemy(){
-		
+		// get a dead bullet from the pool
+		var e:Enemy = cast enemyPool.getFirstDead();
+
+		// if there is no dead bullet return
+		if(e == null) {
+			return;
+		}
+		// mark bullet as alive
+		e.revive();
+		// set the bullet position to the gun position.
+		e.reset(0, 50);
+	}
+	private function MoveToAngle(obj:FlxSprite){
+		//向某个方向移动
+		// set the  angle
+		obj.angle = FlxAngle.angleBetweenMouse(obj, true);
+		// shoot in the right direction! Peng!
+		obj.velocity.x = Math.cos(obj.angle * FlxAngle.TO_RAD) * BULLET_SPEED;
+		obj.velocity.y = Math.sin(obj.angle * FlxAngle.TO_RAD) * BULLET_SPEED;
 	}
 
 }
